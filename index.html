@@ -152,8 +152,9 @@
     <!-- Email rows -->
     <div class="overflow-y-auto flex-1">
 
-      <!-- Unread -->
-      <div class="email-row active flex gap-3 px-4 py-3 border-b border-border" data-email="0">
+      <!-- Unread / new -->
+      <div id="new-email-wrapper" style="height:0;overflow:hidden">
+      <div class="email-row flex gap-3 px-4 py-3 border-b border-border" data-email="0" data-new style="opacity:0;transform:translateY(-10px) scale(0.97)">
         <div class="shrink-0 w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white text-xs font-bold mt-0.5">N</div>
         <div class="min-w-0 flex-1">
           <div class="flex items-baseline justify-between mb-0.5">
@@ -164,6 +165,7 @@
           <p class="text-xs text-gray-400 truncate mt-0.5">Kedves Virág! A Nyári Kalandtábor tábor kezdete közeleg…</p>
         </div>
       </div>
+      </div><!-- /new-email-wrapper -->
 
       <!-- Read -->
       <div class="email-row flex gap-3 px-4 py-3 border-b border-border" data-email="1">
@@ -255,8 +257,16 @@
       </button>
     </div>
 
+    <!-- Empty state -->
+    <div id="empty-state" class="flex-1 flex flex-col items-center justify-center text-center px-10 gap-4">
+      <div class="w-16 h-16 rounded-2xl bg-surface flex items-center justify-center">
+        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.98l7.5-4.04a2.25 2.25 0 012.134 0l7.5 4.04a2.25 2.25 0 011.183 1.98V19.5z"/></svg>
+      </div>
+      <p class="text-sm text-gray-400 font-medium">Válassz levelet az olvasáshoz</p>
+    </div>
+
     <!-- Email content -->
-    <div class="overflow-y-auto flex-1 px-10 py-8 max-w-3xl w-full">
+    <div id="email-content" class="overflow-y-auto flex-1 px-10 py-8 max-w-3xl w-full" style="display:none;opacity:0">
 
       <h1 id="email-subject" class="text-2xl font-semibold text-gray-900 mb-6">Egészségügyi nyilatkozat</h1>
 
@@ -288,6 +298,7 @@
       <!-- Body -->
       <div id="email-body" class="text-sm text-gray-700 leading-7 space-y-4">
         <iframe id="email-iframe" srcdoc="" style="width:100%;min-height:870px;border:none;border-radius:8px;" sandbox="allow-same-origin allow-popups"></iframe>
+        <div id="email-text"></div>
       </div>
 
       <!-- Attachment 
@@ -335,73 +346,80 @@
 </div>
 
 <script type="module">
-  import { animate, stagger } from 'https://cdn.jsdelivr.net/npm/motion@latest/+esm'
+  import { animate, stagger, spring } from 'https://cdn.jsdelivr.net/npm/motion@latest/+esm'
 
-  // Email row switching
   const napfenyHTML = `<!DOCTYPE html><html lang="hu"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;padding:24px;background:#f6faf2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}table{border-collapse:collapse;}img{max-width:100%;}</style></head><body><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f6faf2;"><tr><td align="center"><table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background:#fff;border-radius:6px;width:100%;max-width:540px;"><tr><td style="padding:32px 40px 0;background:#fff;border-radius:6px 6px 0 0;"><img src="https://campio.test/storage/samples/emblem.svg?v=1779533787" alt="Napfény Tábor" style="max-height:46px;max-width:200px;display:block;"></td></tr><tr><td style="padding:36px 40px;background:#fff;"><h1 style="margin:0 0 24px;font-size:28px;font-weight:700;color:#18181b;line-height:1.2;">Egészségügyi nyilatkozat</h1><p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#52525b;">Kedves Virág!</p><p style="margin:0 0 28px;font-size:15px;line-height:1.6;color:#52525b;">A <strong>Nyári Kalandtábor</strong> tábor kezdete közeleg (2026. 07. 06.). Kérjük, töltsd ki az egészségügyi nyilatkozatot az alábbi linken.</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;border:1px solid #e4e4e7;border-radius:4px;"><tr><td colspan="2" style="padding:10px 16px;font-size:11px;font-weight:600;color:#71717a;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #e4e4e7;background:#fafafa;">Tábor</td></tr><tr><td style="padding:11px 16px;font-size:14px;color:#71717a;border-bottom:1px solid #f4f4f5;width:40%;background:#fff;">Tábor neve</td><td style="text-align:right;padding:11px 16px;font-size:14px;color:#18181b;font-weight:600;border-bottom:1px solid #f4f4f5;background:#fff;">Nyári Kalandtábor</td></tr><tr><td style="padding:11px 16px;font-size:14px;color:#71717a;background:#fafafa;">Dátum</td><td style="text-align:right;padding:11px 16px;font-size:14px;color:#18181b;font-weight:600;background:#fafafa;">2026. júl. 6. – júl. 11.</td></tr></table><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;border:1px solid #e4e4e7;border-radius:4px;"><tr><td colspan="2" style="padding:10px 16px;font-size:11px;font-weight:600;color:#71717a;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #e4e4e7;background:#fafafa;">Gyerek</td></tr><tr><td style="padding:11px 16px;font-size:14px;color:#18181b;font-weight:600;background:#fff;">Boróka Balog</td><td style="padding:11px 16px;font-size:14px;color:#71717a;text-align:right;background:#fff;">2016. máj. 14.</td></tr></table><a href="#" style="background:#4A9501;color:#fff;font-weight:600;padding:10px 18px;border-radius:6px;text-decoration:none;display:inline-block;font-size:14px;">Nyilatkozat kitöltése</a><p style="margin:16px 0 28px;font-size:13px;line-height:1.6;color:#a1a1aa;">A link bármikor megnyitható, de az adatok módosítása az elfogadás után már nem lehetséges.</p><p style="margin:0;font-size:15px;line-height:1.6;color:#52525b;">Üdvözlettel,<br><strong style="color:#18181b;">Napfény Tábor</strong></p></td></tr><tr><td align="center" style="padding:32px 40px;border-top:1px solid #e4e4e7;border-radius:0 0 6px 6px;background:#f6faf2;font-size:12px;color:#d0d0d0;">Powered by Campio</td></tr></table></td></tr></table></body></html>`
 
-  // Init first email (iframe)
-  const initIframe = document.getElementById('email-iframe')
-  initIframe.srcdoc = napfenyHTML
-
-  // Entrance
-  animate('[data-fade]', { opacity: [0, 1], x: [-16, 0] }, {
-    duration: 0.45,
-    easing: [0.22, 1, 0.36, 1],
-    delay: stagger(0.08),
-  })
-  animate('[data-slide]', { opacity: [0, 1], x: [-12, 0] }, {
-    duration: 0.45,
-    easing: [0.22, 1, 0.36, 1],
-    delay: 0.1,
-  })
-
   const emails = [
-    {
-      subject: 'Egészségügyi nyilatkozat',
-      iframe: napfenyHTML,
-    },
-    {
-      subject: 'Your weekly digest is ready',
-      body: `<p>Here's a summary of activity across your shared Notion workspaces this week. 12 pages edited, 3 new databases created.</p>`,
-    },
-    {
-      subject: 'Deployment successful — recordly-frames',
-      body: `<p>Your latest push to <strong>main</strong> was deployed 2 minutes ago.</p><p>Preview: <span class="text-accent">recordly-frames.vercel.app</span></p>`,
-    },
-    {
-      subject: 'Re: Conference talk proposal',
-      body: `<p>Looks great! I'd suggest trimming the intro slide — it's a bit dense. Otherwise the structure is solid. Good luck!</p><p>— Anna</p>`,
-    },
-    {
-      subject: 'New comment on "Onboarding v3"',
-      body: `<p>Tom left a comment on frame <strong>Step 2 / CTA</strong>:</p><blockquote class="border-l-2 border-gray-200 pl-3 text-gray-500 italic">"Should this button be primary or secondary here?"</blockquote>`,
-    },
+    { subject: 'Egészségügyi nyilatkozat', iframe: napfenyHTML },
+    { subject: 'Your weekly digest is ready', body: `<p>Here's a summary of activity across your shared Notion workspaces this week. 12 pages edited, 3 new databases created.</p>` },
+    { subject: 'Deployment successful — recordly-frames', body: `<p>Your latest push to <strong>main</strong> was deployed 2 minutes ago.</p><p>Preview: <span class="text-accent">recordly-frames.vercel.app</span></p>` },
+    { subject: 'Re: Conference talk proposal', body: `<p>Looks great! I'd suggest trimming the intro slide — it's a bit dense. Otherwise the structure is solid. Good luck!</p><p>— Anna</p>` },
+    { subject: 'New comment on "Onboarding v3"', body: `<p>Tom left a comment on frame <strong>Step 2 / CTA</strong>:</p><blockquote class="border-l-2 border-gray-200 pl-3 text-gray-500 italic">"Should this button be primary or secondary here?"</blockquote>` },
   ]
 
+  const emptyState   = document.getElementById('empty-state')
+  const emailContent = document.getElementById('email-content')
+  const subjectEl    = document.getElementById('email-subject')
+  const bodyEl       = document.getElementById('email-body')
+  const iframeEl     = document.getElementById('email-iframe')
+  const textEl       = document.getElementById('email-text')
+  const newRow       = document.querySelector('[data-new]')
+
+  // ── Page entrance ──
+  animate('[data-fade]', { opacity: [0, 1], x: [-16, 0] }, { duration: 0.45, easing: [0.22, 1, 0.36, 1], delay: stagger(0.08) })
+  animate('[data-slide]', { opacity: [0, 1], x: [-12, 0] }, { duration: 0.45, easing: [0.22, 1, 0.36, 1], delay: 0.1 })
+
+  // ── Bounce-in new email after entrance ──
+  setTimeout(() => {
+    const wrapper = document.getElementById('new-email-wrapper')
+    // 1. wrapper kinyílik → tolja le a többi emailt
+    wrapper.style.transition = 'height 0.22s cubic-bezier(0.4,0,0.2,1)'
+    wrapper.style.height = '72px'
+    // 2. bounce-in a sor tartalma
+    setTimeout(() => {
+      newRow.style.transition = 'opacity 0.35s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)'
+      newRow.style.opacity = '1'
+      newRow.style.transform = 'none'
+    }, 150)
+  }, 700)
+
+  // ── Open email on click ──
   document.querySelectorAll('.email-row').forEach((row, i) => {
     row.addEventListener('click', () => {
       document.querySelectorAll('.email-row').forEach(r => r.classList.remove('active'))
       row.classList.add('active')
 
-      const subjectEl = document.getElementById('email-subject')
-      const bodyEl = document.getElementById('email-body')
-
-      animate(subjectEl, { opacity: [1, 0], y: [0, -6] }, { duration: 0.15, easing: 'ease-in' }).then(() => {
-        subjectEl.textContent = emails[i].subject
-        const iframeEl = document.getElementById('email-iframe')
-        if (emails[i].iframe) {
-          iframeEl.style.display = 'block'
-          iframeEl.srcdoc = emails[i].iframe
-          bodyEl.innerHTML = ''
-        } else {
-          iframeEl.style.display = 'none'
-          bodyEl.innerHTML = emails[i].body || ''
-        }
-        animate([subjectEl, bodyEl], { opacity: [0, 1], y: [8, 0] }, { duration: 0.25, easing: [0.22, 1, 0.36, 1] })
-      })
+      // First open: fade out empty state, show content
+      if (emailContent.style.display === 'none') {
+        animate(emptyState, { opacity: [1, 0], scale: [1, 0.96] }, { duration: 0.18, easing: 'ease-in' }).then(() => {
+          emptyState.style.display = 'none'
+          emailContent.style.display = 'block'
+          loadEmail(i)
+          animate(emailContent, { opacity: [0, 1], y: [12, 0] }, { duration: 0.28, easing: [0.22, 1, 0.36, 1] })
+        })
+      } else {
+        // Already open: crossfade content
+        animate(subjectEl, { opacity: [1, 0], y: [0, -6] }, { duration: 0.12, easing: 'ease-in' }).then(() => {
+          loadEmail(i)
+          animate([subjectEl, textEl, iframeEl], { opacity: [0, 1], y: [8, 0] }, { duration: 0.25, easing: [0.22, 1, 0.36, 1] })
+        })
+      }
     })
   })
+
+  function loadEmail(i) {
+    subjectEl.textContent = emails[i].subject
+    if (emails[i].iframe) {
+      iframeEl.style.display = 'block'
+      iframeEl.srcdoc = emails[i].iframe
+      textEl.innerHTML = ''
+    } else {
+      iframeEl.style.display = 'none'
+      iframeEl.srcdoc = ''
+      textEl.innerHTML = emails[i].body || ''
+    }
+  }
 </script>
 
 </body>
