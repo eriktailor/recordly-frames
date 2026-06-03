@@ -298,7 +298,7 @@
 
       <!-- Body -->
       <div id="email-body" class="text-sm text-gray-700 leading-7 space-y-4">
-        <iframe id="email-iframe" srcdoc="" style="width:100%;min-height:870px;border:none;border-radius:8px;" sandbox="allow-same-origin allow-popups"></iframe>
+        <iframe id="email-iframe" src="" style="width:100%;min-height:870px;border:none;border-radius:8px;"></iframe>
         <div id="email-text"></div>
       </div>
 
@@ -349,10 +349,8 @@
 <script type="module">
   import { animate, stagger, spring } from 'https://cdn.jsdelivr.net/npm/motion@latest/+esm'
 
-  const napfenyHTML = await fetch('email.html').then(r => r.text())
-
   const emails = [
-    { subject: 'Egészségügyi nyilatkozat', iframe: napfenyHTML },
+    { subject: 'Egészségügyi nyilatkozat', src: 'email.html' },
     { subject: 'Your weekly digest is ready', body: `<p>Here's a summary of activity across your shared Notion workspaces this week. 12 pages edited, 3 new databases created.</p>` },
     { subject: 'Deployment successful — recordly-frames', body: `<p>Your latest push to <strong>main</strong> was deployed 2 minutes ago.</p><p>Preview: <span class="text-accent">recordly-frames.vercel.app</span></p>` },
     { subject: 'Re: Conference talk proposal', body: `<p>Looks great! I'd suggest trimming the intro slide — it's a bit dense. Otherwise the structure is solid. Good luck!</p><p>— Anna</p>` },
@@ -414,13 +412,13 @@
 
   function loadEmail(i) {
     subjectEl.textContent = emails[i].subject
-    if (emails[i].iframe) {
+    if (emails[i].src) {
       iframeEl.style.display = 'block'
-      iframeEl.srcdoc = emails[i].iframe
+      iframeEl.src = emails[i].src
       textEl.innerHTML = ''
     } else {
       iframeEl.style.display = 'none'
-      iframeEl.srcdoc = ''
+      iframeEl.src = ''
       textEl.innerHTML = emails[i].body || ''
     }
   }
