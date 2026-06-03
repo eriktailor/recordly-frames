@@ -37,9 +37,9 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
 
-    .email-row { transition: background 0.12s; cursor: pointer; }
-    .email-row:hover { background: #f1f3f4; }
-    .email-row.active { background: #d3e3fd !important; }
+    .email-row cursor-pointer  hover:bg-slate-50 { transition: background 0.12s; cursor: pointer; }
+    
+    .email-row cursor-pointer  hover:bg-slate-50.active { background: #d3e3fd !important; }
 
     .nav-item { transition: background 0.12s; cursor: pointer; border-radius: 0 999px 999px 0; }
     .nav-item:hover { background: #f1f3f4; }
@@ -154,7 +154,7 @@
 
       <!-- Unread / new -->
       <div id="new-email-wrapper" style="height:0;overflow:hidden" class="border-b border-gray-200">
-        <div class="email-row flex gap-3 px-4 py-3 border-b border-gray-200" data-email="0" data-new style="opacity:0;transform:translateY(-10px) scale(0.97)">
+        <div class="email-row cursor-pointer  hover:bg-slate-50 flex gap-3 px-4 py-3 border-b border-gray-200" data-email="0" data-new style="opacity:0;transform:translateY(-10px) scale(0.97)">
           <div class="shrink-0 w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white text-xs font-bold mt-0.5">N</div>
           <div class="min-w-0 flex-1">
             <div class="flex items-baseline justify-between mb-0.5">
@@ -168,7 +168,7 @@
       </div><!-- /new-email-wrapper -->
 
       <!-- Read -->
-      <div class="email-row flex gap-3 px-4 py-3 border-b border-border" data-email="1">
+      <div class="email-row cursor-pointer  hover:bg-slate-50 flex gap-3 px-4 py-3 border-b border-border" data-email="1">
         <div class="shrink-0 w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-xs font-bold mt-0.5">N</div>
         <div class="min-w-0 flex-1">
           <div class="flex items-baseline justify-between mb-0.5">
@@ -181,7 +181,7 @@
       </div>
 
       <!-- Read -->
-      <div class="email-row flex gap-3 px-4 py-3 border-b border-border" data-email="2">
+      <div class="email-row cursor-pointer  hover:bg-slate-50 flex gap-3 px-4 py-3 border-b border-border" data-email="2">
         <div class="shrink-0 w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-xs font-bold mt-0.5">V</div>
         <div class="min-w-0 flex-1">
           <div class="flex items-baseline justify-between mb-0.5">
@@ -194,7 +194,7 @@
       </div>
 
       <!-- Read 
-      <div class="email-row flex gap-3 px-4 py-3 border-b border-border" data-email="3">
+      <div class="email-row cursor-pointer  hover:bg-slate-50 flex gap-3 px-4 py-3 border-b border-border" data-email="3">
         <div class="shrink-0 w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-xs font-bold mt-0.5 overflow-hidden">
           <img src="img/avatar_1.jpg" class="w-full h-full object-cover"/>
         </div>
@@ -209,7 +209,7 @@
       </div>
 
       
-      <div class="email-row flex gap-3 px-4 py-3 border-b border-border" data-email="4">
+      <div class="email-row cursor-pointer  hover:bg-slate-50 flex gap-3 px-4 py-3 border-b border-border" data-email="4">
         <div class="shrink-0 w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-xs font-bold mt-0.5 overflow-hidden">
           <img src="img/figma_logo.png" class="w-full h-full object-cover"/>
         </div>
